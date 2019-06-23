@@ -72,12 +72,12 @@ void setup()
 void loop() 
 {
   // put the values of rocker, switch and potentiometer into the array
-  data[0] = analogRead (u1xpin);
-  data[1] = analogRead (u1ypin);
-  data[2] = analogRead (u2xpin);
-  data[3] = analogRead (u2ypin);
-  data[4] = analogRead (r1Pin);
-  data[5] = analogRead (r6Pin);
+  data[0] = analogRead (u1xpin); //left joy, horizontal
+  data[1] = analogRead (u1ypin); //left joy, vertical
+  data[2] = analogRead (u2xpin); //right joy, horizontal
+  data[3] = analogRead (u2ypin); //right joy, vertical
+  data[4] = analogRead (r1Pin);  //left pot
+  data[5] = analogRead (r6Pin);  //right pot
   //
   data[6] = 0x0;
   if(digitalRead (btnAPin)==LOW)

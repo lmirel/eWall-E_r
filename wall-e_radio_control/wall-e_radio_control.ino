@@ -3,14 +3,13 @@
 #include "RF24.h"
 //#include <Servo.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #define debug_println(...) \
             do { if (DEBUG) Serial.println(__VA_ARGS__); } while (0)
 #define debug_print(...) \
             do { if (DEBUG) Serial.print(__VA_ARGS__); } while (0)
 
 RF24 radio (2, 4);              //define the object to control NRF24L01
-//byte addresses[6] = "00007";  // define communication address which should correspond to remote control
 const uint64_t rf24pipes[1] = { 0xF0F0F0F011LL }; // define communication address which should correspond to remote control
 const int actPin = 13;           //activity pin
 char have_radio = 0;
@@ -51,6 +50,7 @@ const int powServoPin = 6;      //power servo pin
 //
 int data[9];                    //define array used to save the communication data
 //
+int rtv = 0;
 // wired connections: RIGHT motor
 #define HG7881_A_IA 5 // D5 --> Motor A Input A PWM --> MOTOR A +
 #define HG7881_A_IB 7 // D4 --> Motor A Input B --> MOTOR A -
@@ -59,6 +59,7 @@ int data[9];                    //define array used to save the communication da
 #define MOTOR_A_PWM HG7881_A_IA // Motor A PWM Speed
 #define MOTOR_A_DIR HG7881_A_IB // Motor A Direction
 
+int ltv = 0;
 // wired connections: LEFT motor
 #define HG7881_B_IA 6 // D6 --> Motor B Input A PWM --> MOTOR B +
 #define HG7881_B_IB 8 // D7 --> Motor B Input B --> MOTOR B -
@@ -141,6 +142,58 @@ void go_backward (int spd)
   //A bw
   digitalWrite (MOTOR_A_DIR, HIGH); // direction = forward
   analogWrite (MOTOR_A_PWM, 255 - spd); // PWM speed = fast
+} 
+
+void motor_left (int spd, int dir)
+{
+  debug_print ("left ");
+  debug_print (spd);
+  debug_print (" dir ");
+  debug_println (dir);
+  //B bw
+  if (bmdir != dir)
+    bhalt ();
+  // set the motor speed and direction
+  if (dir > 0)
+  {
+    //B fw
+    digitalWrite (MOTOR_B_DIR, HIGH);
+    analogWrite (MOTOR_B_PWM, 255 - spd);
+    bmdir = 1;
+  }
+  else if (dir < 0)
+  {
+    //B bw
+    digitalWrite (MOTOR_B_DIR, LOW);
+    analogWrite (MOTOR_B_PWM, spd);
+    bmdir = -1;
+  }
+} 
+
+void motor_right (int spd, int dir)
+{
+  debug_print ("right ");
+  debug_print (spd);
+  debug_print (" dir ");
+  debug_println (dir);
+  //B bw
+  if (amdir != dir)
+    ahalt ();
+  // set the motor speed and direction
+  if (dir > 0)
+  {
+    //A fw
+    digitalWrite (MOTOR_A_DIR, LOW);
+    analogWrite (MOTOR_A_PWM, spd);
+    amdir = 1;
+  }
+  else if (dir < 0)
+  {
+    //A bw
+    digitalWrite (MOTOR_A_DIR, HIGH);
+    analogWrite (MOTOR_A_PWM, 255 - spd);
+    amdir = -1;
+  }
 } 
 
 //B - left
@@ -264,64 +317,59 @@ void loop ()
   {
     digitalWrite (actPin, HIGH);
     //throttle trim   data[4]
-    powt = map (data[4], ADC_MIN, ADC_MAX, ADC_MIN, ADC_MID);
-    //direction trim  data[5]
-    dirt = map (data[5], ADC_MIN, ADC_MAX, ADC_MIN, ADC_MID);
-    //
-    //dirv = map (data[2] + dirt - ADC_MID, ADC_MIN, ADC_MAX, SERVO_MIN, SERVO_MAX);
-    dirv = data[2];//map (data[2], ADC_MIN, ADC_MAX, ADC_MID - dirt, ADC_MID + dirt);
-    powv = data[1];//map (data[1], ADC_MIN, ADC_MAX, ADC_MID - powt, ADC_MID + powt);
-#if 1
-    debug_print ("#i:dir ");
-    debug_print (dirv);
-    debug_print (", dirt ");
-    debug_print (dirt);
-    debug_print (", pow ");
-    debug_print (powv);
-    debug_print (", powt ");
+    powt = map (data[4], ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
+
+    ltv = data[1];//left joy vertical
+    rtv = data[3];//right joy vertical
+
+    debug_print ("#i:left ");
+    debug_print (ltv);
+    debug_print (", right ");
+    debug_print (rtv);
+    debug_print (", pow thr ");
     debug_print (powt);
     //
     debug_print (", knt ");
     debug_print (actKnt);
     debug_println ();
-#endif
-    //
-    if (powv < 500)
+
+    //left side
+    if (ltv < 500) //left backward
     {
-      //go back
-      powv = map (powv, ADC_MIN, ADC_MAX, ADC_MID - powt, ADC_MID + powt);
-      powv = map (powv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
-      go_backward (255 - powv);
+      //left back
+      ltv = map (ltv, ADC_MIN, ADC_MAX, -powt, powt);
+      //ltv = map (ltv, -ADC_MAX, ADC_MAX, -PWM_FAST, PWM_FAST);
+      motor_left (-ltv, -1);
     }
-    else if (powv > 540)
+    else if (ltv > 540) //left forward
     {
-      //go forward
-      powv = map (powv, ADC_MIN, ADC_MAX, ADC_MID - powt, ADC_MID + powt);
-      powv = map (powv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
-      go_forward (powv);
+      //left forward
+      ltv = map (ltv, ADC_MIN, ADC_MAX, -powt, powt);
+      //ltv = map (powv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
+      motor_left (ltv, 1);
     }
     else
     {
-      if (dirv < 500)
-      {
-        //go right
-        dirv = map (dirv, ADC_MIN, ADC_MAX, ADC_MID - dirt, ADC_MID + dirt);
-        dirv = map (dirv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
-        go_right (255 - dirv);
-      }
-      else if (dirv > 540)
-      {
-        //go left
-        dirv = map (dirv, ADC_MIN, ADC_MAX, ADC_MID - dirt, ADC_MID + dirt);
-        dirv = map (dirv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
-        go_left (dirv);
-      }
-      else// if (dirv == SERVO_MID)
-      {
-        //stop servos
-        ahalt ();
-        bhalt ();
-      }
+      motor_left (ltv, 0);
+    }
+    //right side
+    if (rtv < 500)
+    {
+      //right back
+      rtv = map (rtv, ADC_MIN, ADC_MAX, -powt, powt);
+      //rtv = map (rtv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
+      motor_right (-rtv, -1);
+    }
+    else if (rtv > 540)
+    {
+      //right forward
+      rtv = map (rtv, ADC_MIN, ADC_MAX, -powt, powt);
+      //rtv = map (rtv, ADC_MIN, ADC_MAX, PWM_NONE, PWM_FAST);
+      motor_right (rtv, 1);
+    }
+    else// if (dirv == SERVO_MID)
+    {
+      motor_right (rtv, 0);
     }
   }
   else
