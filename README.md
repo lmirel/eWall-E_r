@@ -3,6 +3,7 @@
 used with 3D model from https://www.thingiverse.com/thing:3692502
 
 BOM for eWall-E:
+
 Arduino Nano https://www.amazon.de/Elegoo-Entwicklerboard-Arduino-Atmega328P-CH340/dp/B0713ZRJLC/
 
 Radio Module NRF24L01 https://www.amazon.de/AZDelivery-NRF24L01-Wireless-Arduino-Raspberry/dp/B06XJN417D/
