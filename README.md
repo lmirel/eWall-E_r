@@ -34,5 +34,6 @@ Radio Module NRF24L01 https://www.amazon.de/AZDelivery-NRF24L01-Wireless-Arduino
 
 2x 3.7V rechargable batteries
 
-wall-e board schematic
+# wall-e board schematic
 ![schematic](https://github.com/lmirel/eWall-E_r/blob/master/wall-e_radio_bb.png?raw=true)
+
