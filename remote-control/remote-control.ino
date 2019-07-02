@@ -9,7 +9,7 @@
 #define debug_print(...) \
             do { if (DEBUG) Serial.print(__VA_ARGS__); } while (0)
 
-RF24 radio(9, 10);            // define the object to control NRF24L01
+RF24 radio (9, 10);            // define the object to control NRF24L01
 //byte addresses[5] = "00007";  // define communication address which should correspond to remote control
 const uint64_t rf24pipes[1] = { 0xF0F0F0F011LL };
 
@@ -31,12 +31,10 @@ const int btnAPin = 2;           // define pin for D2
 const int btnBPin = 3;           // define pin for D3
 const int btnCPin = 4;           // define pin for D4
 const int btnDPin = 5;           // define pin for D5
-const int u2ypin = A3;       // define pin for direction x of joystick U2
+const int u2ypin = A3;       // define pin for direction Y of joystick U2
 const int u2xpin = A2;       // define pin for direction X of joystick U2
 const int u1ypin = A1;       // define pin for direction Y of joystick U1
 const int u1xpin = A0;       // define pin for direction X of joystick U1
-const int u1swpin = 1;      // define pin for direction Y of joystick U1
-const int u2swpin = 1;      // define pin for direction Y of joystick U1
 
 void setup() 
 {

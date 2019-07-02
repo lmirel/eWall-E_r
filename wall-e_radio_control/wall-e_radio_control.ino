@@ -8,11 +8,12 @@
             do { if (DEBUG) Serial.println(__VA_ARGS__); } while (0)
 #define debug_print(...) \
             do { if (DEBUG) Serial.print(__VA_ARGS__); } while (0)
-
-RF24 radio (2, 4);              //define the object to control NRF24L01
+//radCEpin 4, radCSpin 2
+RF24 radio (4, 2);              //define the object to control NRF24L01
 const uint64_t rf24pipes[1] = { 0xF0F0F0F011LL }; // define communication address which should correspond to remote control
-const int actPin = 13;           //activity pin
 char have_radio = 0;
+
+const int actPin = 13;           //activity pin
 //
 int lightMode = 0;              //0 off, 1 on, 2 alternate left/right, 3 alternate on/off
 #define ACTMAX  50
@@ -51,18 +52,26 @@ const int powServoPin = 6;      //power servo pin
 int data[9];                    //define array used to save the communication data
 //
 int rtv = 0;
+//
+// D5 -- AIA
+// D7 -- AIB
+//
 // wired connections: RIGHT motor
 #define HG7881_A_IA 5 // D5 --> Motor A Input A PWM --> MOTOR A +
-#define HG7881_A_IB 7 // D4 --> Motor A Input B --> MOTOR A -
+#define HG7881_A_IB 7 // D7 --> Motor A Input B --> MOTOR A -
  
 // functional connections
 #define MOTOR_A_PWM HG7881_A_IA // Motor A PWM Speed
 #define MOTOR_A_DIR HG7881_A_IB // Motor A Direction
 
 int ltv = 0;
+//
+// D6 -- BIA
+// D8 -- BIB
+//
 // wired connections: LEFT motor
 #define HG7881_B_IA 6 // D6 --> Motor B Input A PWM --> MOTOR B +
-#define HG7881_B_IB 8 // D7 --> Motor B Input B --> MOTOR B -
+#define HG7881_B_IB 8 // D8 --> Motor B Input B --> MOTOR B -
  
 // functional connections
 #define MOTOR_B_PWM HG7881_B_IA // Motor B PWM Speed
