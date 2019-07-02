@@ -37,3 +37,6 @@ Radio Module NRF24L01 https://www.amazon.de/AZDelivery-NRF24L01-Wireless-Arduino
 # wall-e board schematic
 ![schematic](https://github.com/lmirel/eWall-E_r/blob/master/wall-e_radio_bb.png?raw=true)
 
+# remote control board schematic
+![schematic](https://github.com/lmirel/eWall-E_r/blob/master/remote-control_bb.png?raw=true)
+
