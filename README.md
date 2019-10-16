@@ -2,7 +2,7 @@
 
 used with 3D model from https://www.thingiverse.com/thing:3692502
 
-BOM for eWall-E:
+# BOM for eWall-E:
 
 Arduino Nano https://www.amazon.de/Elegoo-Entwicklerboard-Arduino-Atmega328P-CH340/dp/B0713ZRJLC/
 
@@ -20,10 +20,10 @@ L9110S H-Bridge Dual DC Stepper Motor Driver Controller Board for Arduino https:
 Sound support https://www.amazon.de/Cylewet-DFPlayer-Mini-MP3-Player-Modul-unterstützt-TF-Karten/dp/B071147RGH
 
 
-# wall-e board schematic
+wall-e board schematic
 ![schematic](https://github.com/lmirel/eWall-E_r/blob/master/wall-e_radio_bb.png?raw=true)
 
-BOM for Arduino remote for eWall-E:
+# BOM for Arduino remote for eWall-E:
 
 Arduino Nano https://www.amazon.de/Elegoo-Entwicklerboard-Arduino-Atmega328P-CH340/dp/B0713ZRJLC/
 
@@ -37,6 +37,6 @@ Radio Module NRF24L01 https://www.amazon.de/AZDelivery-NRF24L01-Wireless-Arduino
 
 2x 3.7V rechargable batteries
 
-# remote control board schematic
+remote control board schematic
 ![schematic](https://github.com/lmirel/eWall-E_r/blob/master/remote-control_bb.png?raw=true)
 
